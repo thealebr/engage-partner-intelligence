@@ -1,0 +1,13 @@
+﻿# Arquivos temporários e fontes locais
+backend/uploads/
+backend/*.log
+backend/*.err
+backend/__pycache__/
+**/__pycache__/
+*.pyc
+~$*.xlsx
+*.xlsx
+outputs/
+preview_original.png
+.DS_Store
+Thumbs.db
