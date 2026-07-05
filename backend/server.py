@@ -27,10 +27,11 @@ class Handler(SimpleHTTPRequestHandler):
         sql='''SELECT p.canonical_name channel,b.account_owner owner,e.fcf,e.fca,e.fcp,e.fcss FROM import_batches b JOIN partner_snapshots ps ON ps.batch_id=b.id JOIN partners p ON p.id=ps.partner_id LEFT JOIN exam_import_batches eb ON eb.account_owner=b.account_owner AND eb.year=b.year AND eb.quarter=b.quarter AND eb.is_active=1 LEFT JOIN exam_snapshots e ON e.batch_id=eb.id AND e.partner_id=p.id WHERE b.is_active=1 AND b.year=? AND b.quarter=?'''; params=[year,quarter]
         if owner: sql+=' AND b.account_owner=?'; params.append(owner)
         if channel: sql+=' AND p.canonical_name=?'; params.append(channel)
-        row=con.execute(sql,params).fetchone()
-        if not row: return None
-        item=dict(row); actual={c:int(item.get(c.lower()) or 0) for c in ('FCF','FCA','FCP','FCSS')}
-        return {'channel':item['channel'],'owner':item['owner'],'actual':actual,'has_exam_data':item['fcf'] is not None}
+        data=[]
+        for row in con.execute(sql+' ORDER BY p.canonical_name',params):
+            item=dict(row); actual={c:int(item.get(c.lower()) or 0) for c in ('FCF','FCA','FCP','FCSS')}
+            data.append({'channel':item['channel'],'owner':item['owner'],'actual':actual,'has_exam_data':item['fcf'] is not None})
+        return (data[0] if data else None) if channel else data
     def do_GET(self):
         u=urlparse(self.path)
         if not u.path.startswith('/api/'): return super().do_GET()
