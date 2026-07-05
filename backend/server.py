@@ -22,6 +22,15 @@ class Handler(SimpleHTTPRequestHandler):
             if not item['integrator']: result['integrator'].append({**base,'deficits':deficits('INTEGRATOR'),'has_exam_data':item['fcf'] is not None})
             if item['mssp_account'] and not item['mssp']: result['mssp'].append({**base,'deficits':deficits('MSSP'),'has_exam_data':item['fcf'] is not None})
         return result
+    def certifications(self,q,con):
+        year=int(q.get('year',[0])[0]); quarter=int(q.get('quarter',[0])[0]); owner=q.get('owner',[''])[0]; channel=q.get('channel',[''])[0]
+        sql='''SELECT p.canonical_name channel,b.account_owner owner,e.fcf,e.fca,e.fcp,e.fcss FROM import_batches b JOIN partner_snapshots ps ON ps.batch_id=b.id JOIN partners p ON p.id=ps.partner_id LEFT JOIN exam_import_batches eb ON eb.account_owner=b.account_owner AND eb.year=b.year AND eb.quarter=b.quarter AND eb.is_active=1 LEFT JOIN exam_snapshots e ON e.batch_id=eb.id AND e.partner_id=p.id WHERE b.is_active=1 AND b.year=? AND b.quarter=?'''; params=[year,quarter]
+        if owner: sql+=' AND b.account_owner=?'; params.append(owner)
+        if channel: sql+=' AND p.canonical_name=?'; params.append(channel)
+        row=con.execute(sql,params).fetchone()
+        if not row: return None
+        item=dict(row); actual={c:int(item.get(c.lower()) or 0) for c in ('FCF','FCA','FCP','FCSS')}
+        return {'channel':item['channel'],'owner':item['owner'],'actual':actual,'has_exam_data':item['fcf'] is not None}
     def do_GET(self):
         u=urlparse(self.path)
         if not u.path.startswith('/api/'): return super().do_GET()
@@ -31,6 +40,7 @@ class Handler(SimpleHTTPRequestHandler):
             elif u.path=='/api/import-history': data=[dict(r) for r in con.execute('SELECT id,account_owner,year,quarter,version,status,is_active,imported_at,engage_file,specialize_file FROM import_batches ORDER BY imported_at DESC LIMIT 50')]
             elif u.path=='/api/exam-history': data=[dict(r) for r in con.execute('SELECT id,account_owner,year,quarter,version,status,is_active,imported_at,source_file FROM exam_import_batches ORDER BY imported_at DESC LIMIT 50')]
             elif u.path=='/api/compliance-diagnostics': data=self.diagnostics(q,con)
+            elif u.path=='/api/certifications': data=self.certifications(q,con)
             elif u.path=='/api/partners':
                 year=int(q.get('year',[0])[0]); quarter=int(q.get('quarter',[0])[0]); owner=q.get('owner',[''])[0]; sql='''SELECT p.canonical_name channel,ps.engagement_level level,ps.integrator_compliant integrator,ps.mssp_account,ps.mssp_compliant mssp,b.account_owner owner FROM import_batches b JOIN partner_snapshots ps ON ps.batch_id=b.id JOIN partners p ON p.id=ps.partner_id WHERE b.is_active=1 AND b.year=? AND b.quarter=?'''; params=[year,quarter]
                 if owner: sql+=' AND b.account_owner=?'; params.append(owner)
