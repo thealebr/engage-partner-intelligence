@@ -14,7 +14,10 @@ param(
 # 4. Chama o INICIAR_ENGAGE.ps1, que valida Python, dependências e banco.
 #
 # Execução:
-# powershell -ExecutionPolicy Bypass -File .\INSTALAR_ENGAGE.ps1
+# .\INSTALAR_ENGAGE.cmd
+#
+# O arquivo CMD chama este script com ExecutionPolicy Bypass somente durante
+# esta execução, sem modificar permanentemente a política do Windows.
 
 $ErrorActionPreference = 'Stop'
 $repository = 'https://github.com/thealebr/engage-partner-intelligence.git'
