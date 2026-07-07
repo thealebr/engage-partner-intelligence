@@ -1,11 +1,23 @@
 ﻿# Engage — Beta
 
-## Iniciar
+## Iniciar em qualquer computador
 
-Execute `INICIAR_BETA.ps1`. A aplicação ficará disponível em:
+Depois de clonar ou atualizar o repositório, execute:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\INICIAR_ENGAGE.ps1
+```
+
+O script verifica os pré-requisitos, instala `openpyxl` quando necessário e inicia a aplicação em:
 
 - Dashboard: http://127.0.0.1:8765/
 - API SQLite: http://127.0.0.1:8767/api/periods
+
+Para apenas validar os pré-requisitos:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\INICIAR_ENGAGE.ps1 -CheckOnly
+```
 
 ## Importação trimestral
 
