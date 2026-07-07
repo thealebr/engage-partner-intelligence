@@ -88,11 +88,18 @@ if ($major -ne 3 -or $minor -lt 10 -or $minor -gt 12) {
 }
 Write-Host "Python $version disponivel." -ForegroundColor Green
 
+$savedErrorAction = $ErrorActionPreference
+$ErrorActionPreference = 'Continue'
 & $python -c "import openpyxl" 2>$null
-if ($LASTEXITCODE -ne 0) {
+$openpyxlExitCode = $LASTEXITCODE
+$ErrorActionPreference = $savedErrorAction
+if ($openpyxlExitCode -ne 0) {
     Write-Host 'Instalando a dependencia openpyxl...' -ForegroundColor Yellow
+    $ErrorActionPreference = 'Continue'
     & $python -m pip install --user 'openpyxl>=3.1,<4'
-    if ($LASTEXITCODE -ne 0) { throw 'Nao foi possivel instalar o openpyxl.' }
+    $pipExitCode = $LASTEXITCODE
+    $ErrorActionPreference = $savedErrorAction
+    if ($pipExitCode -ne 0) { throw 'Nao foi possivel instalar o openpyxl.' }
 }
 Write-Host 'Dependencias Python disponiveis.' -ForegroundColor Green
 
