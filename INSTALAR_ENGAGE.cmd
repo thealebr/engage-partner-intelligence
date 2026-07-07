@@ -2,8 +2,8 @@
 setlocal
 
 rem ENGAGE PARTNER INTELLIGENCE
-rem Este iniciador libera a execução somente para o instalador atual.
-rem Não modifica permanentemente a política de segurança do Windows.
+rem Libera a execucao somente para este instalador.
+rem Nao modifica permanentemente a politica de seguranca do Windows.
 
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0INSTALAR_ENGAGE.ps1" %*
 
