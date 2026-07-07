@@ -104,7 +104,7 @@ if ($openpyxlExitCode -ne 0) {
 Write-Host 'Dependencias Python disponiveis.' -ForegroundColor Green
 
 $database = Join-Path $root 'backend\engage.db'
-if (-not (Test-Path $database)) { throw "Banco nao encontrado: $database" }
+if (-not (Test-Path $database)) { throw "Projeto incompleto nesta pasta. Execute INSTALAR_ENGAGE.cmd para clonar o projeto antes de iniciar." }
 Write-Host 'Banco SQLite encontrado.' -ForegroundColor Green
 
 if ($CheckOnly) {
