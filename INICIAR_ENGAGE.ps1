@@ -16,6 +16,9 @@
 # Como executar:
 # powershell -ExecutionPolicy Bypass -File .\INICIAR_ENGAGE.ps1
 #
+# Em um computador onde o projeto ainda não foi clonado, use primeiro:
+# powershell -ExecutionPolicy Bypass -File .\INSTALAR_ENGAGE.ps1
+#
 # Depois da inicialização, acesse:
 # http://127.0.0.1:8765/
 #
