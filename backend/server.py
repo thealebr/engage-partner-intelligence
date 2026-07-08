@@ -1,9 +1,13 @@
 ﻿import cgi, json, re, sqlite3
+import os, shutil
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
 from urllib.parse import urlparse, parse_qs
 from importer import import_pair, import_exams
-ROOT=Path(__file__).resolve().parents[1]; DB=Path(__file__).with_name('engage.db'); UPLOADS=Path(__file__).with_name('uploads')
+ROOT=Path(__file__).resolve().parents[1]; TEMPLATE_DB=Path(__file__).with_name('engage.db'); DB=Path(os.environ.get('ENGAGE_DB',Path(__file__).with_name('engage.local.db'))); UPLOADS=Path(__file__).with_name('uploads')
+if not DB.exists():
+    DB.parent.mkdir(parents=True,exist_ok=True)
+    shutil.copy2(TEMPLATE_DB,DB)
 class Handler(SimpleHTTPRequestHandler):
     def __init__(self,*args,**kwargs): super().__init__(*args,directory=str(ROOT),**kwargs)
     def send_json(self,data,status=200):

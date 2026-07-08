@@ -1,5 +1,6 @@
 ﻿# Arquivos temporários e fontes locais
 backend/uploads/
+backend/engage.local.db
 backend/*.log
 backend/*.err
 backend/*.out
